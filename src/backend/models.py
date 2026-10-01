@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class GameCreate(BaseModel):
@@ -51,6 +51,29 @@ class RoundCreate(BaseModel):
     round_description: str | None = None
     score_player_one: int = Field(strict=True, ge=0)
     score_player_two: int = Field(strict=True, ge=0)
+
+
+class RoundUpdate(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "round_description": "Updated round description",
+                "score_player_one": 6,
+                "score_player_two": 7,
+            }
+        }
+    )
+    round_description: str | None = None
+    score_player_one: int | None = Field(default=None, strict=True, ge=0)
+    score_player_two: int | None = Field(default=None, strict=True, ge=0)
+
+    @field_validator("score_player_one", "score_player_two", mode="before")
+    @classmethod
+    def reject_null_scores(cls, value: int | None) -> int:
+        if value is None:
+            raise ValueError("score cannot be null")
+        return value
+
 
 class Round(RoundCreate):
     id: UUID = Field(default_factory=uuid4)
