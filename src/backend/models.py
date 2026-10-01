@@ -12,6 +12,8 @@ class GameCreate(BaseModel):
                 "game_description": "Friendly game with the boys.",
                 "player_one_name": "Bob",
                 "player_two_name": "Rob",
+                "player_one_battle_ready": False,
+                "player_two_battle_ready": False,
             }
         }
     )
@@ -19,7 +21,9 @@ class GameCreate(BaseModel):
     title: str = Field(min_length=1)
     game_description: str | None = None
     player_one_name: str | None = None
+    player_one_battle_ready: bool | None = None
     player_two_name: str | None = None
+    player_two_battle_ready: bool | None = None
 
 
 class GameUpdate(BaseModel):
@@ -28,6 +32,7 @@ class GameUpdate(BaseModel):
             "example": {
                 "game_description": "Updated game description",
                 "player_two_name": "Updated player",
+                "player_two_battle_ready": True,
             }
         }
     )
@@ -35,7 +40,9 @@ class GameUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1)
     game_description: str | None = None
     player_one_name: str | None = None
+    player_one_battle_ready: bool | None = None
     player_two_name: str | None = None
+    player_two_battle_ready: bool | None = None
 
 
 class RoundCreate(BaseModel):
@@ -43,14 +50,19 @@ class RoundCreate(BaseModel):
         json_schema_extra={
             "example": {
                 "round_description": "Example Round",
-                "score_player_one": 15,
-                "score_player_two": 5,
+                "primary_score_player_one": 15,
+                "primary_score_player_two": 5,
+                "secondary_score_player_one": 16,
+                "secondary_score_player_two": 6,
+
             }
         }
     )
     round_description: str | None = None
-    score_player_one: int = Field(strict=True, ge=0)
-    score_player_two: int = Field(strict=True, ge=0)
+    primary_score_player_one: int = Field(strict=True, ge=0)
+    primary_score_player_two: int = Field(strict=True, ge=0)
+    secondary_score_player_one: int = Field(strict=True, ge=0)
+    secondary_score_player_two: int = Field(strict=True, ge=0)
 
 
 class RoundUpdate(BaseModel):
@@ -58,16 +70,18 @@ class RoundUpdate(BaseModel):
         json_schema_extra={
             "example": {
                 "round_description": "Updated round description",
-                "score_player_one": 6,
-                "score_player_two": 7,
+                "primary_score_player_one": 6,
+                "primary_score_player_two": 7,
             }
         }
     )
     round_description: str | None = None
-    score_player_one: int | None = Field(default=None, strict=True, ge=0)
-    score_player_two: int | None = Field(default=None, strict=True, ge=0)
+    primary_score_player_one: int | None = Field(default=None, strict=True, ge=0)
+    primary_score_player_two: int | None = Field(default=None, strict=True, ge=0)
+    secondary_score_player_one: int | None = Field(default=None, strict=True, ge=0)
+    secondary_score_player_two: int | None = Field(default=None, strict=True, ge=0)
 
-    @field_validator("score_player_one", "score_player_two", mode="before")
+    @field_validator("primary_score_player_one", "primary_score_player_two", "secondary_score_player_one", "secondary_score_player_two", mode="before")
     @classmethod
     def reject_null_scores(cls, value: int | None) -> int:
         if value is None:
