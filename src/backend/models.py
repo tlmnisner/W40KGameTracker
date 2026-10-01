@@ -3,6 +3,10 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+MAX_SCORE_PER_ROUND = 15
+MAX_TOTAL_SCORE = 45
+MAX_ROUNDS = 5
+
 
 class GameCreate(BaseModel):
     model_config = ConfigDict(
@@ -52,17 +56,24 @@ class RoundCreate(BaseModel):
                 "round_description": "Example Round",
                 "primary_score_player_one": 15,
                 "primary_score_player_two": 5,
-                "secondary_score_player_one": 16,
+                "secondary_score_player_one": 15,
                 "secondary_score_player_two": 6,
-
             }
         }
     )
     round_description: str | None = None
-    primary_score_player_one: int = Field(strict=True, ge=0)
-    primary_score_player_two: int = Field(strict=True, ge=0)
-    secondary_score_player_one: int = Field(strict=True, ge=0)
-    secondary_score_player_two: int = Field(strict=True, ge=0)
+    primary_score_player_one: int = Field(
+        strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    primary_score_player_two: int = Field(
+        strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    secondary_score_player_one: int = Field(
+        strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    secondary_score_player_two: int = Field(
+        strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
 
 
 class RoundUpdate(BaseModel):
@@ -76,10 +87,18 @@ class RoundUpdate(BaseModel):
         }
     )
     round_description: str | None = None
-    primary_score_player_one: int | None = Field(default=None, strict=True, ge=0)
-    primary_score_player_two: int | None = Field(default=None, strict=True, ge=0)
-    secondary_score_player_one: int | None = Field(default=None, strict=True, ge=0)
-    secondary_score_player_two: int | None = Field(default=None, strict=True, ge=0)
+    primary_score_player_one: int | None = Field(
+        default=None, strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    primary_score_player_two: int | None = Field(
+        default=None, strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    secondary_score_player_one: int | None = Field(
+        default=None, strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
+    secondary_score_player_two: int | None = Field(
+        default=None, strict=True, ge=0, le=MAX_SCORE_PER_ROUND
+    )
 
     @field_validator("primary_score_player_one", "primary_score_player_two", "secondary_score_player_one", "secondary_score_player_two", mode="before")
     @classmethod

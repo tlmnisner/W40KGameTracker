@@ -20,6 +20,11 @@ async def create_round(round_data: RoundCreate, game_id: UUID) -> Round:
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(error),
         ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(error),
+        ) from error
 
 @router.patch("/{game_id}/{round_id}", response_model=Round)
 async def update_round(game_id: UUID, round_id: UUID, round_data: RoundUpdate) -> Round:
@@ -28,6 +33,11 @@ async def update_round(game_id: UUID, round_id: UUID, round_data: RoundUpdate) -
     except LookupError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(error),
         ) from error
 
