@@ -2,10 +2,13 @@ from fastapi import APIRouter
 from fastapi import HTTPException, status
 from uuid import UUID
 
-from models import Game, GameCreate
+from models import Game, GameCreate, GameUpdate
 from services.game_service import (
     create_game as create_game_service,
     get_game as get_game_service,
+    get_games as get_games_service,
+    update_game as update_game_service,
+    delete_game as delete_game_service,
 )
 
 router = APIRouter(prefix="/games", tags=["games"])
@@ -13,7 +16,7 @@ router = APIRouter(prefix="/games", tags=["games"])
 
 @router.get("/", response_model=list[Game])
 async def get_games() -> list[Game]:
-    return get_game_service()
+    return get_games_service()
 
 
 @router.get("/{game_id}", response_model=Game)
@@ -33,11 +36,17 @@ async def create_game(game_data: GameCreate) -> Game:
     return create_game_service(game_data)
 
 
-@router.patch("/{game_id}")
-async def update_game(game_id: UUID):
-    return {"game_id": game_id, "message": "Hello World"}
+@router.patch("/{game_id}", response_model=Game)
+async def update_game(game_id: UUID, game_data: GameUpdate) -> Game:
+    try:
+        return update_game_service(game_id, game_data)
+    except LookupError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
 
 
 @router.delete("/{game_id}")
 async def delete_game(game_id: UUID):
-    return {"message": "Hello World"}
+    return delete_game_service(game_id)

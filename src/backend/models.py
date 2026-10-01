@@ -22,6 +22,22 @@ class GameCreate(BaseModel):
     player_two_name: str | None = None
 
 
+class GameUpdate(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "game_description": "Updated game description",
+                "player_two_name": "Updated player",
+            }
+        }
+    )
+
+    title: str | None = Field(default=None, min_length=1)
+    game_description: str | None = None
+    player_one_name: str | None = None
+    player_two_name: str | None = None
+
+
 class RoundCreate(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
