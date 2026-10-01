@@ -31,7 +31,7 @@ async def get_game(game_id: UUID) -> Game:
         ) from error
 
 
-@router.post("/", response_model=Game, status_code=201)
+@router.post("/", response_model=Game, status_code=status.HTTP_201_CREATED)
 async def create_game(game_data: GameCreate) -> Game:
     return create_game_service(game_data)
 
@@ -47,6 +47,12 @@ async def update_game(game_id: UUID, game_data: GameUpdate) -> Game:
         ) from error
 
 
-@router.delete("/{game_id}")
-async def delete_game(game_id: UUID):
-    return delete_game_service(game_id)
+@router.delete("/{game_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_game(game_id: UUID) -> None:
+    try:
+        delete_game_service(game_id)
+    except LookupError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error

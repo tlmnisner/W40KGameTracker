@@ -26,7 +26,6 @@ def update_game(game_id: UUID, game_data: GameUpdate) -> Game:
         setattr(game, field, value)
     return game
 
-def delete_game(game_id: UUID) -> Game:
+def delete_game(game_id: UUID) -> None:
     game = get_game(game_id)
     games.remove(game)
-    return game
