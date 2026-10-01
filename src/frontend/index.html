@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warhammer 40K Game Tracker</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+
+        button {
+            margin: 0.25rem;
+            padding: 0.5rem 1rem;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Warhammer 40K Game Tracker</h1>
+    
+    <h2>Games</h2>
+
+    <button onclick="loadGames()">GET /games</button>
+    <button onclick="addGame()">POST /games</button>
+
+    <h2>Response</h2>
+
+    <pre id="output">Waiting...</pre>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+</body>
+</html>
