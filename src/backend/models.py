@@ -71,6 +71,7 @@ class GameCreate(BaseModel):
                 "player_two_name": "Rob",
                 "player_one_battle_ready": False,
                 "player_two_battle_ready": False,
+                "game_finished": False,
             }
         }
     )
@@ -81,6 +82,7 @@ class GameCreate(BaseModel):
     player_one_battle_ready: bool | None = None
     player_two_name: str | None = None
     player_two_battle_ready: bool | None = None
+    game_finished: bool = False
 
 
 class GameUpdate(BaseModel):
@@ -90,6 +92,7 @@ class GameUpdate(BaseModel):
                 "game_description": "Updated game description",
                 "player_two_name": "Updated player",
                 "player_two_battle_ready": True,
+                "game_finished": True,
             }
         }
     )
@@ -100,6 +103,7 @@ class GameUpdate(BaseModel):
     player_one_battle_ready: bool | None = None
     player_two_name: str | None = None
     player_two_battle_ready: bool | None = None
+    game_finished: bool | None = None
 
 
 class RoundCreate(BaseModel):
