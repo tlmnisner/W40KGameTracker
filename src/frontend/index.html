@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Game Tracker</title>
+<title>WH40k Game Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,8 +11,8 @@
 <div class="app">
   <aside>
     <div class="side-head">
-      <h1>Game Tracker</h1>
-      <div class="api"><input id="base" aria-label="API address" value="http://127.0.0.1:8000"><button id="reload">Load</button></div>
+      <h1>WH40k Game Tracker</h1>
+      <p class="tag">There is only war</p>
     </div>
     <div id="list"></div>
     <div class="side-foot"><button class="primary" id="newGame" style="width:100%">New game</button></div>
@@ -26,6 +26,9 @@
   <label for="g_desc">Description</label><input id="g_desc">
   <label for="g_p1">Player one</label><input id="g_p1" required>
   <label for="g_p2">Player two</label><input id="g_p2" required>
+  <label>Army painted and battle ready</label>
+  <button type="button" class="tog" id="paint1" aria-pressed="false"></button>
+  <button type="button" class="tog" id="paint2" aria-pressed="false"></button>
   <div class="row"><button type="button" data-close>Cancel</button><button class="primary" id="gameSave">Save game</button></div>
 </form></dialog>
 
@@ -35,6 +38,14 @@
   <div id="r_jsonwrap"><label for="r_json">Round data (JSON)</label>
   <textarea id="r_json" spellcheck="false">{}</textarea>
   <p class="hint">The round fields couldn't be read from the server, so enter them as JSON.</p></div>
+  <div id="r_photo">
+    <label for="r_file">Photo of the game stage</label>
+    <input type="file" id="r_file" accept="image/*">
+    <div id="r_prev" class="hint"></div>
+    <div id="r_cur"></div>
+    <label for="r_idesc">Photo description</label>
+    <input id="r_idesc" placeholder="What does the board look like?">
+  </div>
   <div class="row"><button type="button" data-close>Cancel</button><button class="primary">Save round</button></div>
 </form></dialog>
 
