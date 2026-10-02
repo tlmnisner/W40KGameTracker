@@ -1,44 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warhammer 40K Game Tracker</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 2rem;
-        }
-
-        button {
-            margin: 0.25rem;
-            padding: 0.5rem 1rem;
-        }
-
-        pre {
-            background: #f0f0f0;
-            padding: 1rem;
-            border-radius: 4px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="app">
+  <aside>
+    <div class="side-head">
+      <h1>Game Tracker</h1>
+      <div class="api"><input id="base" aria-label="API address" value="http://127.0.0.1:8000"><button id="reload">Load</button></div>
+    </div>
+    <div id="list"></div>
+    <div class="side-foot"><button class="primary" id="newGame" style="width:100%">New game</button></div>
+  </aside>
+  <main id="main"></main>
+</div>
 
-    <h1>Warhammer 40K Game Tracker</h1>
-    
-    <h2>Games</h2>
+<dialog id="gameDlg"><form method="dialog" id="gameForm">
+  <h3 id="gameTitle">New game</h3>
+  <label for="g_title">Title</label><input id="g_title" required>
+  <label for="g_desc">Description</label><input id="g_desc">
+  <label for="g_p1">Player one</label><input id="g_p1" required>
+  <label for="g_p2">Player two</label><input id="g_p2" required>
+  <div class="row"><button type="button" data-close>Cancel</button><button class="primary" id="gameSave">Save game</button></div>
+</form></dialog>
 
-    <button onclick="loadGames()">GET /games</button>
-    <button onclick="addGame()">POST /games</button>
+<dialog id="roundDlg"><form method="dialog" id="roundForm">
+  <h3 id="roundTitle">Add round</h3>
+  <div id="r_fields"></div>
+  <div id="r_jsonwrap"><label for="r_json">Round data (JSON)</label>
+  <textarea id="r_json" spellcheck="false">{}</textarea>
+  <p class="hint">The round fields couldn't be read from the server, so enter them as JSON.</p></div>
+  <div class="row"><button type="button" data-close>Cancel</button><button class="primary">Save round</button></div>
+</form></dialog>
 
-    <h2>Response</h2>
+<dialog id="finDlg"><form method="dialog">
+  <h3>Finish game?</h3><p id="finMsg"></p>
+  <div class="row"><button type="button" data-close>Keep playing</button><button class="primary">Finish game</button></div>
+</form></dialog>
 
-    <pre id="output">Waiting...</pre>
+<div id="toast" role="status"></div>
 
-    <script src="app.js"></script>
-</body>
-</html>
-
+<script src="app.js"></script>
 </body>
 </html>
