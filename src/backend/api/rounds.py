@@ -1,11 +1,14 @@
 from fastapi import APIRouter, HTTPException, status
 from uuid import UUID
 
-from models import Round, RoundCreate, RoundUpdate
+from models import Round, RoundCreate, RoundUpdate, RoundImage
 from services.round_service import (
     create_round as create_round_service,
     delete_round as delete_round_service,
     update_round as update_round_service,
+    create_round_image as create_round_image_service,
+    delete_round_image as delete_round_image_service,
+    update_round_image as update_round_image_service,
 )
 
 router = APIRouter(prefix="/rounds", tags=["rounds"])
@@ -46,6 +49,46 @@ async def update_round(game_id: UUID, round_id: UUID, round_data: RoundUpdate) -
 async def delete_round(game_id: UUID, round_id: UUID):
     try:
         delete_round_service(game_id, round_id)
+    except LookupError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+@router.post("/{game_id}/{round_id}/images/", response_model=RoundImage, status_code=status.HTTP_201_CREATED)
+async def create_round_image(game_id: UUID, round_id: UUID, image_data: RoundImage) -> RoundImage:
+    try:
+        return create_round_image_service(game_id, round_id, image_data)
+    except LookupError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(error),
+        ) from error
+
+@router.patch("/{game_id}/{round_id}/images/{image_id}", response_model=RoundImage)
+async def update_round_image(game_id: UUID, round_id: UUID, image_id: UUID, image_data: RoundImage) -> RoundImage:
+    try:
+        return update_round_image_service(game_id, round_id, image_id, image_data)
+    except LookupError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(error),
+        ) from error
+
+@router.delete("/{game_id}/{round_id}/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_round_image(game_id: UUID, round_id: UUID, image_id: UUID) -> None:
+    try:
+        delete_round_image_service(game_id, round_id, image_id)
     except LookupError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

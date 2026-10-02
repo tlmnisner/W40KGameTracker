@@ -1,6 +1,13 @@
 from uuid import UUID
 
-from models import MAX_ROUNDS, MAX_TOTAL_SCORE, Round, RoundCreate, RoundUpdate
+from models import (
+    MAX_ROUNDS,
+    MAX_TOTAL_SCORE,
+    Round,
+    RoundCreate,
+    RoundImage,
+    RoundUpdate,
+)
 from services.game_service import get_game
 
 
@@ -58,3 +65,28 @@ def delete_round(game_id: UUID, round_id:UUID) -> None:
     round_item = get_round(game.id, round_id)
 
     game.rounds.remove(round_item)
+
+def create_round_image(game_id: UUID, round_id: UUID, image_data: RoundImage) -> RoundImage:
+    game = get_game(game_id)
+    round_item = get_round(game.id, round_id)
+    round_item.images.append(image_data)
+    return image_data
+
+def update_round_image(game_id: UUID, round_id: UUID, image_id: UUID, image_data: RoundImage) -> RoundImage:
+    game = get_game(game_id)
+    round_item = get_round(game.id, round_id)
+    image = next((image for image in round_item.images if image.id == image_id), None)
+    if image is None:
+        raise LookupError("Image not found")
+
+    for field, value in image_data.model_dump(exclude_unset=True).items():
+        setattr(round_item, field, value)
+    return image
+
+def delete_round_image(game_id: UUID, round_id: UUID, image_id: UUID) -> None:
+    round_item = get_round(game_id, round_id)
+    image = next((image for image in round_item.images if image.id == image_id), None)
+    if image is None:
+        raise LookupError("Image not found")
+
+    round_item.images.remove(image)

@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
@@ -6,6 +7,58 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 MAX_SCORE_PER_ROUND = 15
 MAX_TOTAL_SCORE = 45
 MAX_ROUNDS = 5
+
+
+class RoundImage(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    image: str = Field(min_length=1)
+    image_description: str | None = None
+    mimetype: str = Field(min_length=1)
+    x_dim: int = Field(gt=0)
+    y_dim: int = Field(gt=0)
+
+    @field_validator("image")
+    @classmethod
+    def validate_base64_picture(cls, value: str) -> str:
+        try:
+            base64.b64decode(value, validate=True)
+        except ValueError as error:
+            raise ValueError("Image must be a valid base64 string") from error
+        return value
+
+    @field_validator("mimetype")
+    @classmethod
+    def validate_image_mimetype(cls, value: str) -> str:
+        if not value.startswith("image/"):
+            raise ValueError("Mimetype must be image type")
+        return value
+
+
+class RoundImageUpdate(BaseModel):
+    image: str | None = Field(default=None, min_length=1)
+    image_description: str | None = None
+    mimetype: str | None = Field(default=None, min_length=1)
+    x_dim: int | None = Field(default=None, gt=0)
+    y_dim: int | None = Field(default=None, gt=0)
+
+    @field_validator("image")
+    @classmethod
+    def validate_base64_picture(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+
+        try:
+            base64.b64decode(value, validate=True)
+        except ValueError as error:
+            raise ValueError("Image must be a valid base64 string") from error
+        return value
+
+    @field_validator("mimetype")
+    @classmethod
+    def validate_image_mimetype(cls, value: str | None) -> str | None:
+        if value is not None and not value.startswith("image/"):
+            raise ValueError("Mimetype must be image type")
+        return value
 
 
 class GameCreate(BaseModel):
@@ -74,6 +127,7 @@ class RoundCreate(BaseModel):
     secondary_score_player_two: int = Field(
         strict=True, ge=0, le=MAX_SCORE_PER_ROUND
     )
+    images: list[RoundImage] = Field(default_factory=list)
 
 
 class RoundUpdate(BaseModel):
@@ -83,6 +137,7 @@ class RoundUpdate(BaseModel):
                 "round_description": "Updated round description",
                 "primary_score_player_one": 6,
                 "primary_score_player_two": 7,
+                "images": [],
             }
         }
     )
@@ -99,12 +154,20 @@ class RoundUpdate(BaseModel):
     secondary_score_player_two: int | None = Field(
         default=None, strict=True, ge=0, le=MAX_SCORE_PER_ROUND
     )
+    images: list[RoundImage] | None = None
 
     @field_validator("primary_score_player_one", "primary_score_player_two", "secondary_score_player_one", "secondary_score_player_two", mode="before")
     @classmethod
     def reject_null_scores(cls, value: int | None) -> int:
         if value is None:
-            raise ValueError("score cannot be null")
+            raise ValueError("Score cannot be null")
+        return value
+
+    @field_validator("images", mode="before")
+    @classmethod
+    def reject_null_images(cls, value: list[RoundImage] | None) -> list[RoundImage]:
+        if value is None:
+            raise ValueError("Images cannot be null")
         return value
 
 
