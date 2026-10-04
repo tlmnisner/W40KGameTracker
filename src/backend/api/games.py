@@ -1,7 +1,5 @@
-import json
 from fastapi import APIRouter
 from fastapi import HTTPException, status
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import Response
 from uuid import UUID
 
@@ -12,6 +10,10 @@ from services.game_service import (
     get_games as get_games_service,
     update_game as update_game_service,
     delete_game as delete_game_service,
+)
+from services.game_transfer import (
+    export_games as export_games_service,
+    import_games as import_games_service,
 )
 
 router = APIRouter(prefix="/games", tags=["games"])
@@ -25,7 +27,7 @@ async def get_games() -> list[Game]:
 @router.get("/export", response_class=Response)
 async def export_games() -> Response:
     games = get_games_service()
-    content = json.dumps(jsonable_encoder(games))
+    content = export_games_service(games)
 
     return Response(
         content=content,
@@ -34,6 +36,17 @@ async def export_games() -> Response:
             "Content-Disposition": 'attachment; filename="export.json"',
         },
     )
+
+
+@router.post("/import", response_model=list[Game], status_code=status.HTTP_201_CREATED)
+async def import_games(games_data: list[Game]) -> list[Game]:
+    try:
+        return import_games_service(games_data)
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(error),
+        ) from error
 
 
 @router.get("/{game_id}", response_model=Game)

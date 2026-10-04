@@ -11,7 +11,7 @@ from models import (
 from services.game_service import get_game
 
 
-def _validate_total_scores(rounds: list[Round]) -> None:
+def validate_total_scores(rounds: list[Round]) -> None:
     score_fields = (
         "primary_score_player_one",
         "primary_score_player_two",
@@ -32,7 +32,7 @@ def create_round(round_data: RoundCreate, game_id: UUID) -> Round:
         raise ValueError(f"A game cannot have more than {MAX_ROUNDS} rounds")
 
     round_item = Round(**round_data.model_dump())
-    _validate_total_scores([*game.rounds, round_item])
+    validate_total_scores([*game.rounds, round_item])
     game.rounds.append(round_item)
     return round_item
 
@@ -52,7 +52,7 @@ def update_round(game_id: UUID, round_id:UUID, round_data: RoundUpdate) -> Round
     updated_round = round_item.model_copy(
         update=round_data.model_dump(exclude_unset=True)
     )
-    _validate_total_scores(
+    validate_total_scores(
         [updated_round if item.id == round_item.id else item for item in game.rounds]
     )
 

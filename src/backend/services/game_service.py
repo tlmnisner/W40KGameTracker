@@ -9,6 +9,7 @@ def create_game(game_data: GameCreate) -> Game:
     games.append(game)
     return game
 
+
 def get_game(game_id: UUID) -> Game:
     game = next((game for game in games if game.id == game_id), None)
     if game is None:
