@@ -29,6 +29,8 @@ label{display:block;font-weight:700;font-size:12px;letter-spacing:.12em;text-tra
 aside{background:#101215;border-right:4px solid var(--gold-d);display:flex;flex-direction:column;min-height:0}
 .side-head{padding:22px 20px;border-bottom:3px solid var(--gold-d);background:linear-gradient(#1b1f25,#101215)}
 .side-head h1{font-size:22px;letter-spacing:.14em;line-height:1.25;color:var(--gold)}
+.transfer-actions{display:flex;gap:8px;margin-top:16px}
+.transfer-actions button{flex:1;padding:7px 8px;font-size:10px;letter-spacing:.06em}
 .tag{margin:8px 0 0;font-family:"Cinzel",serif;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:#a8946a}
 #list{overflow:auto;flex:1;padding:14px}
 .game{display:block;width:100%;text-align:left;border:2px solid var(--gold-d);padding:12px 14px;margin-bottom:12px;background:var(--plate);color:var(--parch);font-weight:400;letter-spacing:0;font-size:inherit;text-transform:none}

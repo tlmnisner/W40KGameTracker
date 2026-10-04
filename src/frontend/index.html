@@ -13,6 +13,11 @@
     <div class="side-head">
       <h1>WH40k Game Tracker</h1>
       <p class="tag">There is only war</p>
+      <div class="transfer-actions" aria-label="Game data transfer">
+        <button type="button" id="exportGames">Export games</button>
+        <button type="button" id="importGames">Import games</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
     </div>
     <div id="list"></div>
     <div class="side-foot"><button class="primary" id="newGame" style="width:100%">New game</button></div>
