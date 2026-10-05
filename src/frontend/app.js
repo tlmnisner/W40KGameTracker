@@ -4,24 +4,12 @@ const $ = (s) => document.querySelector(s);
 // These names mirror the backend models in src/backend/models.py.
 const MAX_ROUNDS = 5;
 const PAINT_PTS = 10;
-const localPaint = (() => {
-  try {
-    return JSON.parse(localStorage.getItem("gt_paint") || "{}");
-  } catch (e) {
-    return {};
-  }
-})();
 
-// Painting points are a frontend-only score because Game has no painting field.
-const savePaint = () => {
-  try {
-    localStorage.setItem("gt_paint", JSON.stringify(localPaint));
-  } catch (e) {}
-};
-
-// Resolve painting status from the local frontend state.
+// Resolve painting status from the backend's battle-ready fields.
 function isPainted(g, sd) {
-  return !!localPaint[g.id + ":" + sd];
+  return sd === 1
+    ? g.player_one_battle_ready === true
+    : g.player_two_battle_ready === true;
 }
 
 // Convert painting status into the score contribution shown in the UI.
@@ -434,6 +422,8 @@ $("#gameForm").addEventListener(
       game_description: $("#g_desc").value.trim(),
       player_one_name: $("#g_p1").value.trim(),
       player_two_name: $("#g_p2").value.trim(),
+      player_one_battle_ready: state.paint[1],
+      player_two_battle_ready: state.paint[2],
     };
     let gid;
     if (state.editGame) {
@@ -446,10 +436,6 @@ $("#gameForm").addEventListener(
       state.sel = gid;
       toast("Game created");
     }
-    [1, 2].forEach((sd) => {
-      localPaint[gid + ":" + sd] = state.paint[sd];
-    });
-    savePaint();
     await loadGames();
   }),
 );
